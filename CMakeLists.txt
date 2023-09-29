@@ -14,7 +14,7 @@ add_subdirectory("extern/starlight")
 set(${PROJECT_NAME}_SOURCE 
 	"src/main.cpp"
 	"src/Test.cpp"
- "src/Application.cpp")
+ "src/Application.cpp" "src/Grid.cpp")
 
 set(${PROJECT_NAME}_HEADERS 
 	"include/Test.hpp"

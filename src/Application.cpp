@@ -12,6 +12,9 @@ Application::Application()
 {
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
+        
+        auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
+        auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader)); 
         auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
         auto materialsPath = mediaDirectoryPath + "models/lion-statue/source";
         this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
@@ -19,6 +22,7 @@ Application::Application()
             .setPosition(glm::vec3{ 1.0f, -0.95f, 0.5f })
             .setScale(glm::vec3{ 0.04f, 0.04f, 0.04f })
             .overrideAmbient(glm::vec3{ 0.5f, 0.5f, 0.5f })
+            .setFragShader(redShaderHandle)
             .build(true)
         );
         StarEngine::sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);

@@ -27,7 +27,13 @@ const uint32_t HEIGHT = 600;
 #include "stb_image.h"
 
 int main() {
+    auto time = star::Time();
+
+    std::unique_ptr<star::RenderOptions> renderOptions(new star::RenderOptions);
+    std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
+
     auto application = Application();
+    auto engine = star::StarEngine::Builder().build(application.getCamera(), application.getLights(), application.getObjects(), *renderOptions);
     application.Load();
 
     //std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
@@ -45,12 +51,8 @@ int main() {
 
     //register user application callbacks
 
-    auto time = star::Time();
 
-    std::unique_ptr<star::RenderOptions> renderOptions(new star::RenderOptions);
-    std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
 
-    auto engine = star::StarEngine::Builder().build(application.getCamera(), application.getLights(), application.getObjects(), *renderOptions);
 
     try {
         engine->Run(); 
