@@ -14,7 +14,6 @@
 #include "managers/ObjectManager.hpp"
 #include "managers/TextureManager.hpp"
 #include "managers/LightManager.hpp"
-#include "managers/MaterialManager.hpp"
 #include "managers/MapManager.hpp"
 
 #include "controllers/CameraController.hpp"

@@ -13,7 +13,7 @@ Application::Application()
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
         
-        auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
+auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
         auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader)); 
         auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
         auto materialsPath = mediaDirectoryPath + "models/lion-statue/source";
@@ -22,45 +22,45 @@ Application::Application()
             .setPosition(glm::vec3{ 1.0f, -0.95f, 0.5f })
             .setScale(glm::vec3{ 0.04f, 0.04f, 0.04f })
             .overrideAmbient(glm::vec3{ 0.5f, 0.5f, 0.5f })
-            .setFragShader(redShaderHandle)
+.setFragShader(redShaderHandle)
             .build(true)
         );
         StarEngine::sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
 
         //load plant 
-        {
-            auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/aloevera/aloevera.obj";
-            this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                .setPath(objectPath)
-                .setPosition(glm::vec3{ -1.0f, 0.0f, -0.0f })
-                .setScale(glm::vec3{ 1.5f, 1.5f, 1.5f })
-                .build());
-        }
-        //table
-        {
-            auto objectPath = mediaDirectoryPath + "models/table/Desk OBJ.obj";
-            this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                .setPath(objectPath)
-                .setPosition(glm::vec3{ 0.0f, -0.4f, 0.0f })
-                .setScale(glm::vec3{ 0.01f, 0.01f, 0.01f })
-                .setMaterialFilePath(mediaDirectoryPath + "models/table/")
-                .setTextureDirectory(mediaDirectoryPath + "models/table/textures/")
-                .build());
-        }
+        //{
+        //    auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/aloevera/aloevera.obj";
+        //    this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+        //        .setPath(objectPath)
+        //        .setPosition(glm::vec3{ -1.0f, 0.0f, -0.0f })
+        //        .setScale(glm::vec3{ 1.5f, 1.5f, 1.5f })
+        //        .build());
+        //}
+        ////table
+        //{
+        //    auto objectPath = mediaDirectoryPath + "models/table/Desk OBJ.obj";
+        //    this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+        //        .setPath(objectPath)
+        //        .setPosition(glm::vec3{ 0.0f, -0.4f, 0.0f })
+        //        .setScale(glm::vec3{ 0.01f, 0.01f, 0.01f })
+        //        .setMaterialFilePath(mediaDirectoryPath + "models/table/")
+        //        .setTextureDirectory(mediaDirectoryPath + "models/table/textures/")
+        //        .build());
+        //}
         //rock
-        {
-            auto objectPath = mediaDirectoryPath + "models/rock/898927_rock.obj";
-            this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                .setPath(objectPath)
-                .setPosition(glm::vec3{ 0.0f, 0.0f, -0.85f })
-                .setScale(glm::vec3{ 0.05f, 0.05f, 0.05f })
-                .setMaterial(star::SceneBuilder::Materials::Builder(StarEngine::sceneBuilder)
-                    .setTexture(StarEngine::textureManager.addResource(star::FileHelpers::GetBaseFileDirectory(objectPath) + "textures/rock_low_Base_Color.png"))
-                    .setBumpMap(StarEngine::textureManager.addResource(star::FileHelpers::GetBaseFileDirectory(objectPath) + "textures/rock_low_Normal_DirectX.png"))
-                    .build())
-                .build());
-            this->rock = &StarEngine::sceneBuilder.entity(this->objectList.at(3));
-        }
+        //{
+        //    auto objectPath = mediaDirectoryPath + "models/rock/898927_rock.obj";
+        //    this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+        //        .setPath(objectPath)
+        //        .setPosition(glm::vec3{ 0.0f, 0.0f, -0.85f })
+        //        .setScale(glm::vec3{ 0.05f, 0.05f, 0.05f })
+        //        .setMaterial(star::SceneBuilder::Materials::Builder(StarEngine::sceneBuilder)
+        //            .setTexture(StarEngine::textureManager.addResource(star::FileHelpers::GetBaseFileDirectory(objectPath) + "textures/rock_low_Base_Color.png"))
+        //            .setBumpMap(StarEngine::textureManager.addResource(star::FileHelpers::GetBaseFileDirectory(objectPath) + "textures/rock_low_Normal_DirectX.png"))
+        //            .build())
+        //        .build());
+        //    this->rock = &StarEngine::sceneBuilder.entity(this->objectList.at(3));
+        //}
 
         {
             auto objectPath = mediaDirectoryPath + "models/icoSphere/low_poly_icoSphere.obj";
@@ -78,51 +78,44 @@ Application::Application()
                 .build());
             sun = &StarEngine::sceneBuilder.light(this->lightList.at(0));
 
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
-                .setType(star::Type::Light::spot)
-                .setPosition(glm::vec3{ -1.0f, 1.0f, 0.0f })
-                .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
-                .setDiameter(14.0f, 14.0f)
-                .setAmbient(glm::vec4{ 1.0f, 1.0f, 1.0f, 0.01f })
-                .setDiffuse(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-                .setSpecular(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-                .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                    .setPath(objectPath)
-                    .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
-                    .setColor(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-                    .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
-                    .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
-                    .build(false))
-                .build());
-            spot = &StarEngine::sceneBuilder.light(this->lightList.at(this->lightList.size() - 1));
+            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
+            //    .setType(star::Type::Light::spot)
+            //    .setPosition(glm::vec3{ -1.0f, 1.0f, 0.0f })
+            //    .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
+            //    .setDiameter(14.0f, 14.0f)
+            //    .setAmbient(glm::vec4{ 1.0f, 1.0f, 1.0f, 0.01f })
+            //    .setDiffuse(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
+            //    .setSpecular(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
+            //    .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+            //        .setPath(objectPath)
+            //        .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
+            //        .setColor(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
+            //        .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
+            //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
+            //        .build(false))
+            //    .build());
+            //spot = &StarEngine::sceneBuilder.light(this->lightList.at(this->lightList.size() - 1));
 
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
-                .setType(star::Type::Light::point)
-                .setPosition(glm::vec3{ 0.4f, 0.4f, 0.0f })
-                .setAmbient(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.01f })
-                .setDiffuse(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
-                .setSpecular(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
-                .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                    .setPath(objectPath)
-                    .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
-                    .setColor(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f })
-                    .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
-                    .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
-                    .build(false))
-                .build());
+            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
+            //    .setType(star::Type::Light::point)
+            //    .setPosition(glm::vec3{ 0.4f, 0.4f, 0.0f })
+            //    .setAmbient(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.01f })
+            //    .setDiffuse(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
+            //    .setSpecular(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
+            //    .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+            //        .setPath(objectPath)
+            //        .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
+            //        .setColor(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f })
+            //        .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
+            //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
+            //        .build(false))
+            //    .build());
             this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
                 .setType(star::Type::Light::point)
                 .setPosition(glm::vec3{ -1.0f, 0.4f, 0.5f })
                 .setAmbient(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.15f })
                 .setDiffuse(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
                 .setSpecular(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
-                .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-                    .setPath(objectPath)
-                    .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
-                    .setColor(glm::vec4{ 0.0f, 0.0f, 1.0f, 1.0f })
-                    .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
-                    .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
-                    .build(false))
                 .build());
         }
 
