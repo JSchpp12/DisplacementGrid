@@ -10,6 +10,7 @@
 #include "ShaderManager.hpp"
 #include "TextureManager.hpp"
 #include "LightManager.hpp"
+#include "Handle.hpp"
 #include "SceneBuilder.hpp"
 #include "KeyStates.hpp"
 #include "Key.hpp"
@@ -28,7 +29,7 @@ class Application :
     public star::StarApplication
 {
 public:
-    Application();
+    Application(star::SceneBuilder& sceneBuilder, std::vector<star::Handle>& objList, std::vector<star::Handle>& lightList);
 
     void Load();
 

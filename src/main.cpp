@@ -31,9 +31,11 @@ int main() {
     std::unique_ptr<star::RenderOptions> renderOptions(new star::RenderOptions);
     std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
 
-    auto application = Application();
-    auto engine = star::StarEngine::Builder().build(application.getCamera(), application.getLights(), application.getObjects(), *renderOptions);
+    //TODO: give object and camera and lights to engine then pass ref to application -- will fix deletion problem
+    auto engine = star::StarEngine(); 
+    auto application = Application(engine.getSceneBuilder(), engine.getObjList(), engine.getLightList());
     application.Load();
+    engine.init(*renderOptions, application);
 
     //std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
 
@@ -54,7 +56,7 @@ int main() {
 
 
     try {
-        engine->Run(); 
+        engine.Run(); 
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;

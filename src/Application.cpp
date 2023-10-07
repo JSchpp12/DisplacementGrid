@@ -8,7 +8,8 @@ bool Application::rotatingCounterClock = true;
 
 std::chrono::steady_clock::time_point Application::timeSinceLastUpdate = std::chrono::steady_clock::now();
 
-Application::Application()
+Application::Application(SceneBuilder& sceneBuilder, std::vector<star::Handle>& objList, std::vector<star::Handle>& lightList) 
+    : StarApplication(sceneBuilder, objList, lightList)
 {
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
@@ -17,7 +18,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
         auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader)); 
         auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
         auto materialsPath = mediaDirectoryPath + "models/lion-statue/source";
-        this->objectList.push_back(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
+        this->objList.push_back(star::SceneBuilder::GameObjects::Builder(this->sceneBuilder)
             .setPath(objectPath)
             .setPosition(glm::vec3{ 1.0f, -0.95f, 0.5f })
             .setScale(glm::vec3{ 0.04f, 0.04f, 0.04f })
@@ -25,7 +26,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
 .setFragShader(redShaderHandle)
             .build(true)
         );
-        StarEngine::sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
+        this->sceneBuilder.entity(objList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
 
         //load plant 
         //{
@@ -68,7 +69,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
             auto fragShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.frag";
 
             ////load light
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
+            this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
                 .setType(star::Type::Light::directional)
                 .setPosition(glm::vec3{ -2.0f, 2.0f, 0.0f })
                 .setAmbient(glm::vec4{ 1.0f, 1.0f, 0.7f, 0.4f })
@@ -76,7 +77,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
                 .setSpecular(glm::vec4{ 1.0f, 1.0f, 0.7f, 1.0f })
                 .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
                 .build());
-            sun = &StarEngine::sceneBuilder.light(this->lightList.at(0));
+            sun = &this->sceneBuilder.light(this->lightList.at(0));
 
             //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
             //    .setType(star::Type::Light::spot)
@@ -110,7 +111,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
             //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
             //        .build(false))
             //    .build());
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
+            this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
                 .setType(star::Type::Light::point)
                 .setPosition(glm::vec3{ -1.0f, 0.4f, 0.5f })
                 .setAmbient(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.15f })
@@ -179,7 +180,7 @@ void Application::Update()
 void Application::onKeyPress(int key, int scancode, int mods)
 {
     if (key == GLFW_KEY_M) {
-        auto& light = StarEngine::sceneBuilder.light(lightList.at(disabledLightCounter));
+        auto& light = this->sceneBuilder.light(lightList.at(disabledLightCounter));
         light.setEnabled();
         if (!upCounter && disabledLightCounter == 0) {
             upCounter = true;
