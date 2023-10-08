@@ -8,25 +8,33 @@ bool Application::rotatingCounterClock = true;
 
 std::chrono::steady_clock::time_point Application::timeSinceLastUpdate = std::chrono::steady_clock::now();
 
-Application::Application(SceneBuilder& sceneBuilder, std::vector<star::Handle>& objList, std::vector<star::Handle>& lightList) 
-    : StarApplication(sceneBuilder, objList, lightList)
+Application::Application(star::StarScene& scene)
+    : StarApplication(scene)
 {
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
         
 auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
         auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader)); 
-        auto objectPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
-        auto materialsPath = mediaDirectoryPath + "models/lion-statue/source";
-        this->objList.push_back(star::SceneBuilder::GameObjects::Builder(this->sceneBuilder)
-            .setPath(objectPath)
-            .setPosition(glm::vec3{ 1.0f, -0.95f, 0.5f })
-            .setScale(glm::vec3{ 0.04f, 0.04f, 0.04f })
-            .overrideAmbient(glm::vec3{ 0.5f, 0.5f, 0.5f })
-.setFragShader(redShaderHandle)
-            .build(true)
-        );
-        this->sceneBuilder.entity(objList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
+        auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
+        auto camPosition = this->camera.getPosition(); 
+        auto camLook = this->camera.getLookDirection(); 
+        
+        auto lion = BasicObject::New(lionPath);
+        lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
+        //lion->setPosition(glm::vec3{ 1.0f, -0.94f, 0.5f });
+        lion->setPosition(glm::vec3{
+            camPosition.x + (camLook.x * 5),
+            camPosition.y + (camLook.y * 5),
+            camPosition.z + (camLook.z * 5)
+        });
+        lion->rotateGlobal(star::Type::Axis::x, -90); 
+        lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 }); 
+
+        this->scene.add(std::move(lion));
+        this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
+
+        //this->sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
 
         //load plant 
         //{
@@ -69,15 +77,15 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
             auto fragShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.frag";
 
             ////load light
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
-                .setType(star::Type::Light::directional)
-                .setPosition(glm::vec3{ -2.0f, 2.0f, 0.0f })
-                .setAmbient(glm::vec4{ 1.0f, 1.0f, 0.7f, 0.4f })
-                .setDiffuse(glm::vec4{ 1.0f, 1.0f, 0.7, 1.0f })
-                .setSpecular(glm::vec4{ 1.0f, 1.0f, 0.7f, 1.0f })
-                .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
-                .build());
-            sun = &this->sceneBuilder.light(this->lightList.at(0));
+            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
+            //    .setType(star::Type::Light::directional)
+            //    .setPosition(glm::vec3{ -2.0f, 2.0f, 0.0f })
+            //    .setAmbient(glm::vec4{ 1.0f, 1.0f, 0.7f, 0.4f })
+            //    .setDiffuse(glm::vec4{ 1.0f, 1.0f, 0.7, 1.0f })
+            //    .setSpecular(glm::vec4{ 1.0f, 1.0f, 0.7f, 1.0f })
+            //    .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
+            //    .build());
+            //sun = &this->sceneBuilder.light(this->lightList.at(0));
 
             //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
             //    .setType(star::Type::Light::spot)
@@ -111,13 +119,13 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
             //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
             //        .build(false))
             //    .build());
-            this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
-                .setType(star::Type::Light::point)
-                .setPosition(glm::vec3{ -1.0f, 0.4f, 0.5f })
-                .setAmbient(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.15f })
-                .setDiffuse(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
-                .setSpecular(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
-                .build());
+            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
+            //    .setType(star::Type::Light::point)
+            //    .setPosition(glm::vec3{ -1.0f, 0.4f, 0.5f })
+            //    .setAmbient(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.15f })
+            //    .setDiffuse(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
+            //    .setSpecular(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
+            //    .build());
         }
 
         std::cout << "App Controls" << std::endl;
@@ -138,9 +146,11 @@ void Application::Load()
 {
 }
 
-void Application::Update()
+void Application::onWorldUpdate()
 {
-    auto now = std::chrono::steady_clock::now();
+    auto pos = this->camera.getLookDirection(); 
+
+   /* auto now = std::chrono::steady_clock::now();
     float elapsedTime = std::chrono::duration<float>(now - timeSinceLastUpdate).count();
     rock->rotateRelative(star::Type::Axis::y, elapsedTime * 30);
 
@@ -174,27 +184,27 @@ void Application::Update()
         spot->setInnerDiameter(spot->getInnerDiameter() - (spotSpeed * elapsedTime));
         std::cout << spot->getInnerDiameter() << std::endl;
     }
-    this->time.updateLastFrameTime();
+    this->time.updateLastFrameTime();*/
 }
 
 void Application::onKeyPress(int key, int scancode, int mods)
 {
-    if (key == GLFW_KEY_M) {
-        auto& light = this->sceneBuilder.light(lightList.at(disabledLightCounter));
-        light.setEnabled();
-        if (!upCounter && disabledLightCounter == 0) {
-            upCounter = true;
-        }
-        else if (upCounter && disabledLightCounter == lightList.size() - 1) {
-            upCounter = false;
-        }
-        disabledLightCounter = upCounter ? disabledLightCounter + 1 : disabledLightCounter - 1;
-    }
+    //if (key == GLFW_KEY_M) {
+    //    auto& light = this->sceneBuilder.light(lightList.at(disabledLightCounter));
+    //    light.setEnabled();
+    //    if (!upCounter && disabledLightCounter == 0) {
+    //        upCounter = true;
+    //    }
+    //    else if (upCounter && disabledLightCounter == lightList.size() - 1) {
+    //        upCounter = false;
+    //    }
+    //    disabledLightCounter = upCounter ? disabledLightCounter + 1 : disabledLightCounter - 1;
+    //}
    
 
-    if (key == GLFW_KEY_Z) {
-        sun->setEnabled();
-    }
+    //if (key == GLFW_KEY_Z) {
+    //    sun->setEnabled();
+    //}
 }
 
 void Application::onKeyRelease(int key, int scancode, int mods)
@@ -210,9 +220,5 @@ void Application::onMouseButtonAction(int button, int action, int mods)
 }
 
 void Application::onScroll(double xoffset, double yoffset)
-{
-}
-
-void Application::onWorldUpdate()
 {
 }

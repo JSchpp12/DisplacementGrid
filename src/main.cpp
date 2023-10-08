@@ -8,8 +8,6 @@
 #include "common/ConfigFile.hpp"
 #include "common/RenderOptions.hpp"
 
-#include "builders/SceneBuilder.hpp"
-
 #include "managers/ShaderManager.hpp"
 #include "managers/ObjectManager.hpp"
 #include "managers/TextureManager.hpp"
@@ -33,27 +31,9 @@ int main() {
 
     //TODO: give object and camera and lights to engine then pass ref to application -- will fix deletion problem
     auto engine = star::StarEngine(); 
-    auto application = Application(engine.getSceneBuilder(), engine.getObjList(), engine.getLightList());
+    auto application = Application(engine.getScene());
     application.Load();
-    engine.init(*renderOptions, application);
-
-    //std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
-
-    //TODO: implement better management system 
-    //std::vector<star::Light*> mainLightList(lightList->size());
-    //for (size_t i = 0; i < lightList->size(); i++) {
-    //    mainLightList.at(i) = &lightManager->resource(lightList->at(i));
-    //}
-
-    //prepare renderer 
-    //auto window = star::StarWindow(WIDTH, HEIGHT, "Starlight", star::InteractionSystem::glfwKeyHandle, star::InteractionSystem::glfwMouseButtonCallback, star::InteractionSystem::glfwMouseMovement, star::InteractionSystem::glfwScrollCallback);
-    //auto renderer = star::VulkanRenderer(*configFile, *renderOptions, *shaderManager, *objectManager, *textureManager, *mapManager, *materialManager, *camera, *objectList, mainLightList, window);
-    //renderer.prepare();
-
-    //register user application callbacks
-
-
-
+    engine.init(*renderOptions, application.getCamera());
 
     try {
         engine.Run(); 

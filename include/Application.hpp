@@ -11,9 +11,10 @@
 #include "TextureManager.hpp"
 #include "LightManager.hpp"
 #include "Handle.hpp"
-#include "SceneBuilder.hpp"
 #include "KeyStates.hpp"
 #include "Key.hpp"
+#include "BasicObject.hpp"
+#include "StarScene.hpp"
 
 #include <GLFW/glfw3.h>
 
@@ -29,11 +30,11 @@ class Application :
     public star::StarApplication
 {
 public:
-    Application(star::SceneBuilder& sceneBuilder, std::vector<star::Handle>& objList, std::vector<star::Handle>& lightList);
+    Application(star::StarScene& scene);
 
     void Load();
 
-    void Update();
+    void onWorldUpdate() override; 
 
     void onKeyPress(int key, int scancode, int mods) override;
 
@@ -43,7 +44,7 @@ private:
     const int sunSpeed = 50;
     const float spotSpeed = 2;
     double scaleAmt = 0.1;
-    star::GameObject* rock = nullptr;
+    star::StarObject* rock = nullptr;
     star::Light* sun = nullptr;
     star::Light* spot = nullptr;
 
@@ -58,5 +59,4 @@ private:
     void onMouseMovement(double xpos, double ypos) override;
     void onMouseButtonAction(int button, int action, int mods) override;
     void onScroll(double xoffset, double yoffset) override;
-    void onWorldUpdate() override;
 };
