@@ -32,6 +32,7 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
         lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 }); 
 
         this->scene.add(std::move(lion));
+        //this->scene.add(std::make_unique<Square>()); 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
 
         //this->sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);

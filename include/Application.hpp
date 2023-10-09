@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "Square.hpp"
 #include "StarEngine.hpp"
 #include "StarApplication.hpp"
 #include "ConfigFile.hpp"
