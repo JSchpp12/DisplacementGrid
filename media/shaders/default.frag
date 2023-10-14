@@ -190,7 +190,8 @@ void main() {
 
 			vec3 totalSurfaceColor = (ambientLight + diffuseLight + specularLight) * vec3(texture(textureSampler, inFragTextureCoordinate)); 
 
-			outColor = vec4(totalSurfaceColor, 1.0);
+			// outColor = vec4(totalSurfaceColor, 1.0);
+			outColor = vec4(1.0); 
 		}
 	}
 }

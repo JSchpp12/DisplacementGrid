@@ -5,7 +5,6 @@
 #include "StarApplication.hpp"
 #include "ConfigFile.hpp"
 #include "Time.hpp"
-#include "Camera.hpp"
 #include "Interactivity.hpp"
 #include "DebugHelpers.hpp"
 #include "ShaderManager.hpp"
@@ -16,6 +15,7 @@
 #include "Key.hpp"
 #include "BasicObject.hpp"
 #include "StarScene.hpp"
+#include "Grid.hpp"
 
 #include <GLFW/glfw3.h>
 

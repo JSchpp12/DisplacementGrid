@@ -14,11 +14,11 @@
 #include "managers/LightManager.hpp"
 #include "managers/MapManager.hpp"
 
-#include "controllers/CameraController.hpp"
+#include "BasicCamera.hpp"
 #include "controllers/OptionsController.hpp"
 
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+const uint32_t WIDTH = 1600;
+const uint32_t HEIGHT = 1200;
 
 #define STB_IMAGE_IMPLEMENTATION    
 #include "stb_image.h"

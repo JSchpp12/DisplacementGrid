@@ -15,26 +15,23 @@ Application::Application(star::StarScene& scene)
     {
         
 auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
-        auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader)); 
-        auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
-        auto camPosition = this->camera.getPosition(); 
-        auto camLook = this->camera.getLookDirection(); 
-        
-        auto lion = BasicObject::New(lionPath);
+        this->camera.setPosition(glm::vec3{ 2.0, 1.0f, 3.0f });
+        auto camPosition = this->camera.getPosition();
+        this->camera.setLookDirection(-camPosition);
+
+
+        auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader));
+        //auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
+        std::unique_ptr<Grid> grid = std::make_unique<Grid>(1200,1200); 
+/*        auto lion = BasicObject::New(lionPath);
         lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
-        //lion->setPosition(glm::vec3{ 1.0f, -0.94f, 0.5f });
-        lion->setPosition(glm::vec3{
-            camPosition.x + (camLook.x * 5),
-            camPosition.y + (camLook.y * 5),
-            camPosition.z + (camLook.z * 5)
-        });
-        lion->rotateGlobal(star::Type::Axis::x, -90); 
-        lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 }); 
+        lion->setPosition(glm::vec3{ 0.0, 0.0, 0.0 });
+        lion->rotateGlobal(star::Type::Axis::x, -90);
+        lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
+        this->scene.add(std::move(lion));*/ 
 
-        this->scene.add(std::move(lion));
-        //this->scene.add(std::make_unique<Square>()); 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
-
+        this->scene.add(std::move(grid));
         //this->sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
 
         //load plant 
@@ -149,7 +146,6 @@ void Application::Load()
 
 void Application::onWorldUpdate()
 {
-    auto pos = this->camera.getLookDirection(); 
 
    /* auto now = std::chrono::steady_clock::now();
     float elapsedTime = std::chrono::duration<float>(now - timeSinceLastUpdate).count();

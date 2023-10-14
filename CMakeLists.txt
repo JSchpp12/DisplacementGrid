@@ -14,11 +14,14 @@ add_subdirectory("extern/starlight")
 set(${PROJECT_NAME}_SOURCE 
 	"src/main.cpp"
 	"src/Application.cpp" 
-	"src/Grid.cpp" )
+	"src/Grid.cpp"
+	"src/HeightDisplacementMaterial.cpp"
+)
 
 set(${PROJECT_NAME}_HEADERS 
 	"include/Application.hpp"
 	"include/Grid.hpp"
+	"include/HeightDisplacementMaterial.hpp"
 )
 
 add_executable(${PROJECT_NAME} "${${PROJECT_NAME}_SOURCE};${${PROJECT_NAME}_HEADERS}")
