@@ -2,14 +2,23 @@
 
 void star::HeightDisplacementMaterial::prepRender(StarDevice& device)
 {
+	this->renderDisplaceTexture = std::unique_ptr<StarTexture>(new StarTexture(device, displaceTexture));
 }
 
 void star::HeightDisplacementMaterial::initDescriptorLayouts(StarDescriptorSetLayout::Builder& constBuilder)
 {
+	constBuilder.addBinding(1, vk::DescriptorType::eCombinedImageSampler, vk::ShaderStageFlagBits::eFragment);
 }
 
 void star::HeightDisplacementMaterial::buildConstDescriptor(StarDescriptorWriter writer)
 {
+	auto texInfo = vk::DescriptorImageInfo{
+		renderDisplaceTexture->getSampler(),
+		renderDisplaceTexture->getImageView(),
+		vk::ImageLayout::eShaderReadOnlyOptimal 
+	};
+
+	writer.writeImage(0, texInfo);
 	writer.build(this->descriptorSet);
 }
 
