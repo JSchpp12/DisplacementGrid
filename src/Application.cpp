@@ -23,15 +23,15 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
         auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader));
         auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
 
-        //auto lion = BasicObject::New(lionPath);
-        //lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
-        //lion->setPosition(glm::vec3{ 0.0, 0.0, 0.0 });
-        //lion->rotateGlobal(star::Type::Axis::x, -90);
-        //lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
-        //this->scene.add(std::move(lion)); 
+        auto lion = BasicObject::New(lionPath);
+        lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
+        lion->setPosition(glm::vec3{ 0.0, 0.0, 0.0 });
+        lion->rotateGlobal(star::Type::Axis::x, -90);
+        lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
+        this->scene.add(std::move(lion)); 
 
-        std::unique_ptr<Grid> grid = std::make_unique<Grid>(10, 10);
-        this->scene.add(std::move(grid));
+        //std::unique_ptr<Grid> grid = std::make_unique<Grid>(10, 10);
+        //this->scene.add(std::move(grid));
 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
 

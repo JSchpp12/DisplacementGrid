@@ -2,7 +2,7 @@
 
 void star::HeightDisplacementMaterial::prepRender(StarDevice& device)
 {
-	this->renderDisplaceTexture = std::unique_ptr<StarTexture>(new StarTexture(device, displaceTexture));
+	displaceTexture.prepRender(device);
 }
 
 void star::HeightDisplacementMaterial::initDescriptorLayouts(StarDescriptorSetLayout::Builder& constBuilder)
