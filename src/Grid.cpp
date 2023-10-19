@@ -23,12 +23,8 @@ Grid::Grid(int vertX, int vertY) : material(vertX,vertY), vertX(vertX), vertY(ve
 				glm::vec3{0.0f,0.0f,0.0f},
 				glm::vec2{stepSizeY*i, stepSizeX*j}							//texture coordinate
 			});
-			if (test) {
-				material.getTexture().getRawData()->at(i).at(j) = star::Color{ 0,0,255,255 };
-				test = false;
-			}
-			else
-				material.getTexture().getRawData()->at(i).at(j) = star::Color{ 255,0,0,255 };
+
+			material.getTexture().getRawData()->at(i).at(j) = star::Color{ 255,0,0,255 };
 
 			if (j % 2 == 1 && i % 2 == 1) {
 				//this is a 'central' vert where drawing should be based around
@@ -114,8 +110,13 @@ Grid::Grid(int vertX, int vertY) : material(vertX,vertY), vertX(vertX), vertY(ve
 	this->meshes.push_back(std::unique_ptr<star::StarMesh>(new star::StarMesh(std::move(verts), std::move(indices), material))); 
 }
 
-void Grid::updateTexture() {
+void Grid::updateTexture(std::vector<int> locsX, std::vector<int> locsY, const std::vector<star::Color> newColor) {
 	assert(this->meshes.size() > 0 && "Make sure this function is only called after the prepRender phase");
 
+	star::RuntimeUpdateTexture& tex = this->material.getTexture();
+	for (int i = 0; i < locsX.size(); i++) {
+		tex.getRawData()->at(locsX[i]).at(locsY[i]) = newColor[i];
+	}
 
+	tex.updateGPU();
 }

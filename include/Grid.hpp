@@ -3,7 +3,7 @@
 #include "VertColorMaterial.hpp"
 #include "HeightDisplacementMaterial.hpp"
 #include "StarMesh.hpp"
-#include "StarTexture.hpp"
+#include "RuntimeUpdateTexture.hpp"
 #include "StarObject.hpp"
 #include "Vertex.hpp"
 #include "Color.hpp"
@@ -17,14 +17,15 @@ class Grid : public star::StarObject{
 public:
 	Grid(int vertX, int vertY);
 
-	void updateTexture(); 
+	void updateTexture(std::vector<int> locsX, std::vector<int> locY, const std::vector<star::Color> newColor);
 
 	const std::vector<std::unique_ptr<star::StarMesh>>& getMeshes() override { return this->meshes; };
-
+	star::Color getTexColorAt(int x, int y) { return this->material.getTexture().getRawData()->at(x).at(y); }
+	int getSizeX() { return this->vertX; }
+	int getSizeY() { return this->vertY; }
 protected:
+	int vertX=0, vertY=0;
 	star::HeightDisplacementMaterial material; 
 	std::vector<std::unique_ptr<star::StarMesh>> meshes;
-	std::unique_ptr<star::StarTexture> displacementTexture; 
-	int vertX=0, vertY=0;
-
+	std::unique_ptr<star::RuntimeUpdateTexture> displacementTexture; 
 };

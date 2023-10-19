@@ -3,7 +3,7 @@
 #include "Color.hpp"
 #include "StarMaterial.hpp"
 #include "Texture.hpp"
-#include "StarTexture.hpp"
+#include "RuntimeUpdateTexture.hpp"
 
 #include <memory>
 #include <vector>
@@ -23,11 +23,10 @@ namespace star {
 
 		void bind(vk::CommandBuffer& commandBuffer, vk::PipelineLayout pipelineLayout, int swapChainImageIndex) override;
 
-		Texture& getTexture() { return this->displaceTexture; }
+		RuntimeUpdateTexture& getTexture() { return this->displaceTexture; }
 
 	protected:
-		Texture displaceTexture; 
-		std::unique_ptr<StarTexture> renderDisplaceTexture; 
+		RuntimeUpdateTexture displaceTexture; 
 		int size_x = 0, size_y = 0;
 
 	};

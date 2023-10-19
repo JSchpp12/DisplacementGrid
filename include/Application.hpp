@@ -16,12 +16,16 @@
 #include "BasicObject.hpp"
 #include "StarScene.hpp"
 #include "Grid.hpp"
+#include "Time.hpp"
+#include "UpdateTextureRenderer.hpp"
 
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <vulkan/vulkan.hpp>
 
 #include <string> 
 #include <memory> 
@@ -39,16 +43,22 @@ public:
 
     void onKeyPress(int key, int scancode, int mods) override;
 
+    virtual std::unique_ptr<star::StarRenderer> getRenderer(star::StarDevice& device, star::StarWindow& window, star::RenderOptions& options) override;
+
 protected:
+    void applyStrokeAroundLocation(); 
 
 private:
+    vk::Semaphore* textureUpdateDone = nullptr; 
     const int sunSpeed = 50;
     const float spotSpeed = 2;
     double scaleAmt = 0.1;
     star::StarObject* rock = nullptr;
     star::Light* sun = nullptr;
     star::Light* spot = nullptr;
-
+    Grid* gridObj = nullptr; 
+    int frameCounter = 0; 
+    int upTexLocX = 0, upTexLocY = 0; 
 
     static int disabledLightCounter;
     static bool upCounter;

@@ -33,7 +33,7 @@ int main() {
     auto engine = star::StarEngine(); 
     auto application = Application(engine.getScene());
     application.Load();
-    engine.init(*renderOptions, application.getCamera());
+    engine.init(application, *renderOptions);
 
     try {
         engine.Run(); 

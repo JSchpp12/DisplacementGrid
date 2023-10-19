@@ -14,24 +14,25 @@ Application::Application(star::StarScene& scene)
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
         
-auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
+        auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
         this->camera.setPosition(glm::vec3{ 2.0, 1.0f, 3.0f });
         auto camPosition = this->camera.getPosition();
         this->camera.setLookDirection(-camPosition);
-
-
+    
         auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader));
-        auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
+        //auto lionPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "models/lion-statue/source/rapid.obj";
 
-        auto lion = BasicObject::New(lionPath);
-        lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
-        lion->setPosition(glm::vec3{ 0.0, 0.0, 0.0 });
-        lion->rotateGlobal(star::Type::Axis::x, -90);
-        lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
-        this->scene.add(std::move(lion)); 
+        //auto lion = BasicObject::New(lionPath);
+        //lion->setScale(glm::vec3{ 0.04f, 0.04f, 0.04f });
+        //lion->setPosition(glm::vec3{ 0.0, 0.0, 0.0 });
+        //lion->rotateGlobal(star::Type::Axis::x, -90);
+        //lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
+        //this->scene.add(std::move(lion)); 
 
-        //std::unique_ptr<Grid> grid = std::make_unique<Grid>(10, 10);
-        //this->scene.add(std::move(grid));
+        std::unique_ptr<Grid> grid = std::make_unique<Grid>(20, 20);
+        auto gridHandle = this->scene.add(std::move(grid));
+        StarObject* rawRef = &this->scene.getObject(gridHandle);
+        this->gridObj = static_cast<Grid*>(rawRef); 
 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
 
@@ -128,18 +129,6 @@ auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) +
             //    .setSpecular(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
             //    .build());
         }
-
-        std::cout << "App Controls" << std::endl;
-        std::cout << "Press M to switch lights off and on in order" << std::endl;
-        std::cout << "Right Arrow: rotate sun light clockwise" << std::endl;
-        std::cout << "Left Arrow: rotate sun light counter clockwise" << std::endl;
-        std::cout << "Up Arrow: increase diameter of spot light" << std::endl;
-        std::cout << "Down Arrow: decrease diameter of spot light" << std::endl;
-        std::cout << "U: Increase outer diam of spot light" << std::endl;
-        std::cout << "Y: Decrease outer diam of spot light" << std::endl;
-        std::cout << "J: Increase inner diam of spot light" << std::endl;
-        std::cout << "H: Decrease inner diam of spot light" << std::endl;
-        std::cout << "Z: Enable/Disable sun" << std::endl;
     }
 }
 
@@ -149,6 +138,32 @@ void Application::Load()
 
 void Application::onWorldUpdate()
 {
+    bool update = false; 
+    frameCounter = 0; 
+
+    if (star::KeyStates::state(star::KEY::UP)) {
+        upTexLocY++; 
+        update = true; 
+    }
+
+    if (star::KeyStates::state(star::KEY::DOWN)) {
+        upTexLocY--; 
+        update = true; 
+    }
+
+    if (star::KeyStates::state(star::KEY::RIGHT)) {
+        upTexLocX++; 
+        update = true; 
+    }
+
+    if (star::KeyStates::state(star::KEY::LEFT)) {
+        upTexLocX--;
+        update = true; 
+    }
+
+    if (update) {
+        applyStrokeAroundLocation(); 
+    }
 
    /* auto now = std::chrono::steady_clock::now();
     float elapsedTime = std::chrono::duration<float>(now - timeSinceLastUpdate).count();
@@ -205,6 +220,49 @@ void Application::onKeyPress(int key, int scancode, int mods)
     //if (key == GLFW_KEY_Z) {
     //    sun->setEnabled();
     //}
+}
+
+std::unique_ptr<star::StarRenderer> Application::getRenderer(star::StarDevice& device, star::StarWindow& window, star::RenderOptions& options)
+{
+    std::vector<std::unique_ptr<Light>>& lightList = scene.getLights();
+    std::vector<std::reference_wrapper<StarObject>> prepObjects;
+    for (auto& obj : scene.getObjects()) {
+        prepObjects.push_back(*obj.second);
+    }
+    auto nRender = std::unique_ptr<UpdateTextureRenderer>(new UpdateTextureRenderer(window, lightList, prepObjects, camera, options, device));
+    textureUpdateDone = &nRender->getTextureUpdateSemaphore();
+
+    return std::move(nRender); 
+}
+
+void Application::applyStrokeAroundLocation()
+{
+    std::vector<int> locsX, locsY; 
+    std::vector<star::Color> colors; 
+
+    if (upTexLocX >= gridObj->getSizeX() - 1)
+        upTexLocX = gridObj->getSizeX() - 1;
+    else if (upTexLocX < 0)
+        upTexLocX = 0;
+
+    if (upTexLocY >= gridObj->getSizeY())
+        upTexLocY = gridObj->getSizeY() - 1;
+    else if (upTexLocY < 0)
+        upTexLocY = 0;
+
+    auto oldColor = gridObj->getTexColorAt(upTexLocX, upTexLocY);
+    if (oldColor.g() < 255) {
+        auto newColor = star::Color{
+        oldColor.r(),
+        255,
+        oldColor.b(),
+        255 };
+        locsX.push_back(upTexLocX); 
+        locsY.push_back(upTexLocY);
+        colors.push_back(newColor); 
+
+        gridObj->updateTexture(locsX, locsY, colors);
+    }
 }
 
 void Application::onKeyRelease(int key, int scancode, int mods)

@@ -13,8 +13,8 @@ void star::HeightDisplacementMaterial::initDescriptorLayouts(StarDescriptorSetLa
 void star::HeightDisplacementMaterial::buildConstDescriptor(StarDescriptorWriter writer)
 {
 	auto texInfo = vk::DescriptorImageInfo{
-		renderDisplaceTexture->getSampler(),
-		renderDisplaceTexture->getImageView(),
+		displaceTexture.getSampler(),
+		displaceTexture.getImageView(),
 		vk::ImageLayout::eShaderReadOnlyOptimal 
 	};
 
