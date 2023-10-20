@@ -135,7 +135,7 @@ void Application::applyStrokeAroundLocation(glm::vec2 location, int width, int c
             auto newColor = gridObj->getTexColorAt(locationX, locationY);
             if (newColor.g() < 255) {
                 float strength = (float)centerStrength - (glm::distance(location, glm::vec2(locationX, locationY)) * strengthStep);
-                strength = strength * (timeCounter);
+                strength = strength * (timeCounter * 4);
 
                 if (strength < 0)
                     strength = 0; 

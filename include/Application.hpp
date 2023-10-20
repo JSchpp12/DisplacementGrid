@@ -39,6 +39,8 @@ public:
 
     void Load();
 
+    virtual std::string getApplicationName() { return "Starlight Application"; }
+
     void onWorldUpdate() override; 
 
     void onKeyPress(int key, int scancode, int mods) override;
@@ -54,7 +56,7 @@ private:
     star::Time point; 
     double timeCounter = 0; 
     int strength = 50;
-    int width = 5;
+    int width = 10;
     double mouseXPos = 0, mouseYPos = 0; 
     bool wasClick = false; 
     Grid* gridObj = nullptr; 
