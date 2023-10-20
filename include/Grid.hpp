@@ -8,6 +8,8 @@
 #include "Vertex.hpp"
 #include "Color.hpp"
 
+#include <glm/glm.hpp>
+
 #include <memory>
 
 /// <summary>
@@ -19,13 +21,21 @@ public:
 
 	void updateTexture(std::vector<int> locsX, std::vector<int> locY, const std::vector<star::Color> newColor);
 
+	std::optional<glm::vec3> getWorldCoordsWhereRayIntersectsMe(glm::vec3 tail, glm::vec3 head); 
+
+	std::optional<glm::vec2> getXYCoordsWhereRayIntersectsMe(glm::vec3 tail, glm::vec3 head);
+
 	const std::vector<std::unique_ptr<star::StarMesh>>& getMeshes() override { return this->meshes; };
 	star::Color getTexColorAt(int x, int y) { return this->material.getTexture().getRawData()->at(x).at(y); }
 	int getSizeX() { return this->vertX; }
 	int getSizeY() { return this->vertY; }
 protected:
+	int width = 0.5; 
+
 	int vertX=0, vertY=0;
 	star::HeightDisplacementMaterial material; 
 	std::vector<std::unique_ptr<star::StarMesh>> meshes;
 	std::unique_ptr<star::RuntimeUpdateTexture> displacementTexture; 
+
+	glm::vec3 getCenter();
 };

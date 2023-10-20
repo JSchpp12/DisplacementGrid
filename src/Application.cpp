@@ -29,11 +29,12 @@ Application::Application(star::StarScene& scene)
         //lion->moveRelative(glm::vec3{ 0.0, -1.0, 0.0 });
         //this->scene.add(std::move(lion)); 
 
-        std::unique_ptr<Grid> grid = std::make_unique<Grid>(20, 20);
+        std::unique_ptr<Grid> grid = std::make_unique<Grid>(1000, 1000);
+        grid->setScale(glm::vec3{ 5.0, 5.0, 5.0 });
         auto gridHandle = this->scene.add(std::move(grid));
         StarObject* rawRef = &this->scene.getObject(gridHandle);
         this->gridObj = static_cast<Grid*>(rawRef); 
-
+        gridObj->setPosition(glm::vec3{ 0.0, 0.1f, 0.0 }); 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
 
         //this->sceneBuilder.entity(objectList.at(0)).rotateGolbal(star::Type::Axis::x, -90);
@@ -142,27 +143,48 @@ void Application::onWorldUpdate()
     frameCounter = 0; 
 
     if (star::KeyStates::state(star::KEY::UP)) {
-        upTexLocY++; 
-        update = true; 
+         auto newLocY = upTexLocY + 1; 
+        if (newLocY > 0 && newLocY < gridObj->getSizeY())
+            upTexLocY = newLocY; 
+        update = true;
     }
 
     if (star::KeyStates::state(star::KEY::DOWN)) {
-        upTexLocY--; 
-        update = true; 
+        auto newLocY = upTexLocY - 1;
+        if (newLocY > 0 && newLocY < gridObj->getSizeY())
+            upTexLocY = newLocY;
+        update = true;
     }
 
     if (star::KeyStates::state(star::KEY::RIGHT)) {
-        upTexLocX++; 
-        update = true; 
+        auto newLocX = upTexLocX + 1; 
+        if (newLocX > 0 && newLocX < gridObj->getSizeX())
+            upTexLocX = newLocX;
+        update = true;
     }
 
     if (star::KeyStates::state(star::KEY::LEFT)) {
-        upTexLocX--;
-        update = true; 
+        auto newLocX = upTexLocX - 1;
+        if (newLocX > 0 && newLocX < gridObj->getSizeX())
+            upTexLocX = newLocX;
+        update = true;
     }
 
-    if (update) {
-        applyStrokeAroundLocation(); 
+    if (update)
+        std::cout << "Location: " << upTexLocX << ", " << upTexLocY << std::endl;
+
+    if (star::KeyStates::state(star::KEY::SPACE)) {
+        //applyStrokeAroundLocation(upTexLocX, upTexLocY, width); 
+
+        //cast ray toward plane
+        auto tail = this->camera.getPosition();
+        auto lookDir = glm::normalize(this->camera.getLookDirection()); 
+        auto head = this->camera.getPosition() + lookDir; 
+
+        std::optional<glm::vec2> hitPoint = gridObj->getXYCoordsWhereRayIntersectsMe(tail, head);
+        if (hitPoint.has_value()) {
+            applyStrokeAroundLocation(hitPoint.value(), 2);
+        }
     }
 
    /* auto now = std::chrono::steady_clock::now();
@@ -235,34 +257,53 @@ std::unique_ptr<star::StarRenderer> Application::getRenderer(star::StarDevice& d
     return std::move(nRender); 
 }
 
-void Application::applyStrokeAroundLocation()
+void Application::applyStrokeAroundLocation(glm::vec2 location, int width)
 {
-    std::vector<int> locsX, locsY; 
-    std::vector<star::Color> colors; 
+    std::vector<int> locsX, locsY;
+    std::vector<star::Color> colors;
 
-    if (upTexLocX >= gridObj->getSizeX() - 1)
-        upTexLocX = gridObj->getSizeX() - 1;
-    else if (upTexLocX < 0)
-        upTexLocX = 0;
+    for (int i = 0; i < width*2; i++) {
+        auto locationX = 0;
+        auto locationY = 0;
+        if (i < width) {
+            locationX = location.x - i;
+            locationY = location.y - i;
+        }
+        else {
+            locationX = location.x + i;
+            locationY = location.y + i;
+        }
 
-    if (upTexLocY >= gridObj->getSizeY())
-        upTexLocY = gridObj->getSizeY() - 1;
-    else if (upTexLocY < 0)
-        upTexLocY = 0;
 
-    auto oldColor = gridObj->getTexColorAt(upTexLocX, upTexLocY);
-    if (oldColor.g() < 255) {
-        auto newColor = star::Color{
-        oldColor.r(),
-        255,
-        oldColor.b(),
-        255 };
-        locsX.push_back(upTexLocX); 
-        locsY.push_back(upTexLocY);
-        colors.push_back(newColor); 
+        for (int j = 0; j < i * 2; j++) {
+            auto newColor = gridObj->getTexColorAt(upTexLocX, upTexLocY + j);
+            if (newColor.g() < 255) {
+                newColor = star::Color{
+                newColor.r(),
+                255,
+                newColor.b(),
+                255 };
+            }
 
-        gridObj->updateTexture(locsX, locsY, colors);
+            if (canApplyColorToLocation(locationX, locationY + j, newColor)) {
+                locsX.push_back(locationX);
+                locsY.push_back(locationY + j);
+                colors.push_back(newColor);
+            }
+        }
     }
+
+    gridObj->updateTexture(locsX, locsY, colors);
+}
+
+bool Application::canApplyColorToLocation(int x, int y, star::Color color) {
+    if (x >= gridObj->getSizeX() - 1 || x < 0)
+        return false;
+
+    if (y >= gridObj->getSizeY() || y < 0)
+        return false;
+
+    return true; 
 }
 
 void Application::onKeyRelease(int key, int scancode, int mods)
@@ -271,10 +312,16 @@ void Application::onKeyRelease(int key, int scancode, int mods)
 
 void Application::onMouseMovement(double xpos, double ypos)
 {
+    this->mouseXPos = xpos; 
+    this->mouseYPos = ypos; 
 }
 
 void Application::onMouseButtonAction(int button, int action, int mods)
 {
+    if (action == GLFW_PRESS) {
+        std::cout << "Click"; 
+        this->wasClick = true; 
+    }
 }
 
 void Application::onScroll(double xoffset, double yoffset)

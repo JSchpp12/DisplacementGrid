@@ -120,3 +120,66 @@ void Grid::updateTexture(std::vector<int> locsX, std::vector<int> locsY, const s
 
 	tex.updateGPU();
 }
+
+std::optional<glm::vec3> Grid::getWorldCoordsWhereRayIntersectsMe(glm::vec3 tail, glm::vec3 head)
+{
+	glm::vec3 vectorDirection = glm::normalize((head - tail));
+	glm::vec3 planeNorm = glm::vec3(this->upVector);
+
+	//check for parallel vector plane
+	float denm = glm::dot(planeNorm, vectorDirection);
+	if (glm::abs(denm) > 0.0001f) {
+		auto dis = this->getCenter() - tail;
+		auto dot = glm::dot(glm::vec4(dis, 0.0), this->upVector);
+		float t = dot / denm;
+		if (t >= 0) {
+			//auto intersectPoint = glm::vec4((tail + t), 0.0) * vectorDirection;
+			//auto scaledInt = intersectPoint * glm::vec4(this->getScale(), 0.0); 
+			//return std::optional<glm::vec4>(intersectPoint); 
+			auto point = tail + t * vectorDirection;
+			return std::optional<glm::vec3>(point);
+		}
+	}
+
+	return std::optional<glm::vec3>();
+}
+
+std::optional<glm::vec2> Grid::getXYCoordsWhereRayIntersectsMe(glm::vec3 tail, glm::vec3 head)
+{
+	glm::vec3 modelLoc; 
+
+	auto worldLoc = getWorldCoordsWhereRayIntersectsMe(tail, head); 
+	if (!worldLoc.has_value())
+		return std::optional<glm::vec2>();
+	else
+		modelLoc = glm::inverse(this->getDisplayMatrix()) * glm::vec4(worldLoc.value(), 1.0); 
+
+	//convert world loc to x-y texture coordinate
+	//glm::vec3 center = this->getCenter(); 
+
+	//glm::vec2 fCenter = glm::vec2{ center.x, center.z };
+	//glm::vec2 fHit = glm::vec2{ modelLoc.x, modelLoc.z }; 
+
+	//glm::vec2 distance = fCenter - fHit; 
+
+	//calculate step sizes 
+	float stepX = 1.0f / this->vertX; 
+	float stepY = 1.0f / this->vertY; 
+
+	int numXSteps = glm::floor(modelLoc.x / stepX); 
+	int numYSteps = glm::floor(modelLoc.z / stepY); 
+
+	return std::optional<glm::vec2>(glm::vec2(numXSteps, numYSteps)); 
+}
+
+glm::vec3 Grid::getCenter() {
+	glm::vec3 position = this->getPosition(); 
+	//position begins at corner, move to center
+	position.x = position.x + 0.5; 
+	position.z = position.y + 0.5; 
+
+	//scale it
+	glm::vec3 scaledPosition = position * this->getScale(); 
+
+	return scaledPosition; 
+}

@@ -7,7 +7,7 @@ void star::HeightDisplacementMaterial::prepRender(StarDevice& device)
 
 void star::HeightDisplacementMaterial::initDescriptorLayouts(StarDescriptorSetLayout::Builder& constBuilder)
 {
-	constBuilder.addBinding(1, vk::DescriptorType::eCombinedImageSampler, vk::ShaderStageFlagBits::eFragment);
+	constBuilder.addBinding(0, vk::DescriptorType::eCombinedImageSampler, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment);
 }
 
 void star::HeightDisplacementMaterial::buildConstDescriptor(StarDescriptorWriter writer)

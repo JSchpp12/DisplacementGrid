@@ -46,7 +46,9 @@ public:
     virtual std::unique_ptr<star::StarRenderer> getRenderer(star::StarDevice& device, star::StarWindow& window, star::RenderOptions& options) override;
 
 protected:
-    void applyStrokeAroundLocation(); 
+    void applyStrokeAroundLocation(glm::vec2 worldCenterPoint, int width);
+
+    bool canApplyColorToLocation(int upTexLocX, int upTexLocY, star::Color color); 
 
 private:
     vk::Semaphore* textureUpdateDone = nullptr; 
@@ -59,7 +61,11 @@ private:
     Grid* gridObj = nullptr; 
     int frameCounter = 0; 
     int upTexLocX = 0, upTexLocY = 0; 
+    int width = 5;
+    double mouseXPos = 0, mouseYPos = 0; 
+    bool wasClick = false; 
 
+    static int screen_x, screen_y; 
     static int disabledLightCounter;
     static bool upCounter;
     static bool rotatingCounterClock;

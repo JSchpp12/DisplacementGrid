@@ -26,6 +26,8 @@ layout(binding = 0, set = 1) uniform uniformBufferObject{
 	mat4 normalModelMatrix; 
 } objectUbo;
 
+layout(binding = 0, set = 2) uniform sampler2D textureSampler;  
+
 layout(location = 0) out vec3 outFragColor; 
 layout(location = 1) out vec2 outFragTextureCoordinate; 
 layout(location = 2) out vec3 outFragPositionWorld;	//fragment's position in world space
@@ -39,7 +41,9 @@ layout(location = 8) out mat3 outTBNMat;
 
 void main() {
 	vec4 positionWorld = objectUbo.modelMatrix * vec4(inPosition, 1.0); 
+	vec4 textureColor = texture(textureSampler, inTexCoord);
 
+	positionWorld = vec4(positionWorld.x, (positionWorld.y + textureColor.g), positionWorld.z, 1.0);
 	//calculate TBN mat for use from translating sampled normal matrix from Tangent space to model space
 	vec3 T = normalize(vec3(objectUbo.modelMatrix * vec4(inTangent, 0.0)));
 	vec3 B = normalize(vec3(objectUbo.modelMatrix * vec4(inBiTangent, 0.0)));
@@ -47,8 +51,8 @@ void main() {
 	//Gram-Schmidt process to re-orthogonalize TBN vectors
 //	T = normalize(T - dot(T, N) * N
 	outTBNMat = mat3(T, B, N); 
-
-	gl_Position = globalUbo.proj * globalUbo.view * positionWorld;
+	
+	gl_Position = globalUbo.proj * globalUbo.view * positionWorld; 
 	outFragNormalWorld = normalize(mat3(objectUbo.normalModelMatrix) * inNormal);
 
 	//pass through needed properties to fragments
