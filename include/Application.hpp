@@ -46,7 +46,7 @@ public:
     virtual std::unique_ptr<star::StarRenderer> getRenderer(star::StarDevice& device, star::StarWindow& window, star::RenderOptions& options) override;
 
 protected:
-    void applyStrokeAroundLocation(glm::vec2 worldCenterPoint, int width);
+    void applyStrokeAroundLocation(glm::vec2 worldCenterPoint, int width, int centerStrength);
 
     bool canApplyColorToLocation(int upTexLocX, int upTexLocY, star::Color color); 
 

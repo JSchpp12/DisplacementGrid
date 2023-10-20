@@ -24,7 +24,7 @@ Grid::Grid(int vertX, int vertY) : material(vertX,vertY), vertX(vertX), vertY(ve
 				glm::vec2{stepSizeY*i, stepSizeX*j}							//texture coordinate
 			});
 
-			material.getTexture().getRawData()->at(i).at(j) = star::Color{ 255,0,0,255 };
+			material.getTexture().getRawData()->at(i).at(j) = star::Color{ 40,40,40,255 };
 
 			if (j % 2 == 1 && i % 2 == 1) {
 				//this is a 'central' vert where drawing should be based around
