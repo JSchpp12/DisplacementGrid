@@ -14,15 +14,11 @@ add_subdirectory("extern/starlight")
 set(${PROJECT_NAME}_SOURCE 
 	"src/main.cpp"
 	"src/Application.cpp" 
-	"src/Grid.cpp"
-	"src/HeightDisplacementMaterial.cpp"
 	"src/UpdateTextureRenderer.cpp"
 )
 
 set(${PROJECT_NAME}_HEADERS 
 	"include/Application.hpp"
-	"include/Grid.hpp"
-	"include/HeightDisplacementMaterial.hpp"
 	"include/UpdateTextureRenderer.hpp"
 )
 

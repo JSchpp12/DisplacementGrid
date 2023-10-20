@@ -7,13 +7,9 @@ Application::Application(star::StarScene& scene)
 {
     auto mediaDirectoryPath = StarEngine::GetSetting(star::Config_Settings::mediadirectory);
     {
-        
-        auto redShader = StarEngine::GetSetting(star::Config_Settings::mediadirectory) + "shaders/red.frag"; 
         this->camera.setPosition(glm::vec3{ 2.0, 1.0f, 3.0f });
         auto camPosition = this->camera.getPosition();
         this->camera.setLookDirection(-camPosition);
-    
-        auto redShaderHandle = StarEngine::shaderManager.addResource(redShader, std::make_unique<star::StarShader>(redShader));
 
         std::unique_ptr<Grid> grid = std::make_unique<Grid>(1000, 1000);
         grid->setScale(glm::vec3{ 5.0, 5.0, 5.0 });
@@ -22,12 +18,6 @@ Application::Application(star::StarScene& scene)
         this->gridObj = static_cast<Grid*>(rawRef); 
         gridObj->setPosition(glm::vec3{ 0.0, 0.1f, 0.0 }); 
         this->scene.add(std::unique_ptr<star::Light>(new Light(star::Type::Light::directional, glm::vec3{ 10,10,10 }))); 
-
-        {
-            auto objectPath = mediaDirectoryPath + "models/icoSphere/low_poly_icoSphere.obj";
-            auto vertShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.vert";
-            auto fragShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.frag";
-        }
     }
 }
 

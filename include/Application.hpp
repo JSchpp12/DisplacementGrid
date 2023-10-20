@@ -59,7 +59,7 @@ private:
     int width = 10;
     double mouseXPos = 0, mouseYPos = 0; 
     bool wasClick = false; 
-    Grid* gridObj = nullptr; 
+    star::Grid* gridObj = nullptr; 
 
     // Inherited via StarApplication
     void onKeyRelease(int key, int scancode, int mods) override;
