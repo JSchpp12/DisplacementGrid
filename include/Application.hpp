@@ -61,12 +61,6 @@ private:
     bool wasClick = false; 
     Grid* gridObj = nullptr; 
 
-    static int screen_x, screen_y; 
-    static int disabledLightCounter;
-    static bool upCounter;
-    static bool rotatingCounterClock;
-    static std::chrono::steady_clock::time_point timeSinceLastUpdate;
-
     // Inherited via StarApplication
     void onKeyRelease(int key, int scancode, int mods) override;
     void onMouseMovement(double xpos, double ypos) override;

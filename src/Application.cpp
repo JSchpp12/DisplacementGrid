@@ -2,12 +2,6 @@
 
 using namespace star; 
 
-int Application::disabledLightCounter = int(0);
-bool Application::upCounter = true;
-bool Application::rotatingCounterClock = true;
-
-std::chrono::steady_clock::time_point Application::timeSinceLastUpdate = std::chrono::steady_clock::now();
-
 Application::Application(star::StarScene& scene)
     : StarApplication(scene)
 {

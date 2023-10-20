@@ -24,8 +24,6 @@ const uint32_t HEIGHT = 1200;
 #include "stb_image.h"
 
 int main() {
-    auto time = star::Time();
-
     std::unique_ptr<star::RenderOptions> renderOptions(new star::RenderOptions);
     std::unique_ptr<star::OptionsController> optionsController(new star::OptionsController(*renderOptions));
 
