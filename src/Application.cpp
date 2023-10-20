@@ -78,57 +78,6 @@ Application::Application(star::StarScene& scene)
             auto objectPath = mediaDirectoryPath + "models/icoSphere/low_poly_icoSphere.obj";
             auto vertShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.vert";
             auto fragShaderPath = mediaDirectoryPath + "models/icoSphere/icoSphere.frag";
-
-            ////load light
-            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
-            //    .setType(star::Type::Light::directional)
-            //    .setPosition(glm::vec3{ -2.0f, 2.0f, 0.0f })
-            //    .setAmbient(glm::vec4{ 1.0f, 1.0f, 0.7f, 0.4f })
-            //    .setDiffuse(glm::vec4{ 1.0f, 1.0f, 0.7, 1.0f })
-            //    .setSpecular(glm::vec4{ 1.0f, 1.0f, 0.7f, 1.0f })
-            //    .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
-            //    .build());
-            //sun = &this->sceneBuilder.light(this->lightList.at(0));
-
-            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
-            //    .setType(star::Type::Light::spot)
-            //    .setPosition(glm::vec3{ -1.0f, 1.0f, 0.0f })
-            //    .setDirection(glm::vec4{ 0.0f, -1.0f, 0.0f, 0.0f })
-            //    .setDiameter(14.0f, 14.0f)
-            //    .setAmbient(glm::vec4{ 1.0f, 1.0f, 1.0f, 0.01f })
-            //    .setDiffuse(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-            //    .setSpecular(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-            //    .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-            //        .setPath(objectPath)
-            //        .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
-            //        .setColor(glm::vec4{ 1.0f, 1.0f, 1.0f, 1.0f })
-            //        .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
-            //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
-            //        .build(false))
-            //    .build());
-            //spot = &StarEngine::sceneBuilder.light(this->lightList.at(this->lightList.size() - 1));
-
-            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(StarEngine::sceneBuilder)
-            //    .setType(star::Type::Light::point)
-            //    .setPosition(glm::vec3{ 0.4f, 0.4f, 0.0f })
-            //    .setAmbient(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.01f })
-            //    .setDiffuse(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
-            //    .setSpecular(glm::vec4{ 1.0f, 0.0f, 0.0f, 0.2f })
-            //    .setLinkedObject(star::SceneBuilder::GameObjects::Builder(StarEngine::sceneBuilder)
-            //        .setPath(objectPath)
-            //        .setScale(glm::vec3{ 0.07f, 0.07f, 0.07f })
-            //        .setColor(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f })
-            //        .setVertShader(StarEngine::shaderManager.addResource(vertShaderPath, std::make_unique<star::StarShader>(vertShaderPath)))
-            //        .setFragShader(StarEngine::shaderManager.addResource(fragShaderPath, std::make_unique<star::StarShader>(fragShaderPath)))
-            //        .build(false))
-            //    .build());
-            //this->lightList.push_back(star::SceneBuilder::Lights::Builder(this->sceneBuilder)
-            //    .setType(star::Type::Light::point)
-            //    .setPosition(glm::vec3{ -1.0f, 0.4f, 0.5f })
-            //    .setAmbient(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.15f })
-            //    .setDiffuse(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
-            //    .setSpecular(glm::vec4{ 0.0f, 0.0f, 1.0f, 0.2f })
-            //    .build());
         }
     }
 }
@@ -187,41 +136,20 @@ void Application::onWorldUpdate()
         }
     }
 
-   /* auto now = std::chrono::steady_clock::now();
-    float elapsedTime = std::chrono::duration<float>(now - timeSinceLastUpdate).count();
-    rock->rotateRelative(star::Type::Axis::y, elapsedTime * 30);
+    if (star::KeyStates::state(star::KEY::R)) {
+        //reset texture
+        std::vector<int> locsX, locsY; 
+        std::vector<star::Color> colors; 
 
-    if (star::KeyStates::state(KEY::RIGHT)) {
-        auto rot = glm::mat4(1.0f);
-        float rotationAmt = (float)this->time.timeElapsedLastFrameSeconds() * sunSpeed;
-        rot = glm::rotate(rot, rotationAmt, glm::vec3{ 0.0f, 0.0f, -1.0f });
-        sun->direction = rot * sun->direction;
+        for (int i = 0; i < gridObj->getSizeX(); i++) {
+            for (int j = 0; j < gridObj->getSizeY(); j++) {
+                locsX.push_back(i); 
+                locsY.push_back(j); 
+                colors.push_back(star::Color(255, 0, 0, 1)); 
+            }
+        }
+        gridObj->updateTexture(locsX, locsY, colors);
     }
-    else if (star::KeyStates::state(KEY::LEFT)) {
-        auto rot = glm::mat4(1.0f);
-        float rotationAmt = (float)this->time.timeElapsedLastFrameSeconds() * sunSpeed;
-        rot = glm::rotate(rot, rotationAmt, glm::vec3{ 0.0f, 0.0f, 1.0f });
-        sun->direction = rot * sun->direction;
-    }
-
-    if (star::KeyStates::state(KEY::DOWN)) {
-        spot->setOuterDiameter(spot->getOuterDiameter() + (spotSpeed * elapsedTime));
-        std::cout << spot->getOuterDiameter() << std::endl;
-    }
-    else if (star::KeyStates::state(KEY::Y)) {
-        spot->setOuterDiameter(spot->getOuterDiameter() - (spotSpeed * elapsedTime));
-        std::cout << spot->getOuterDiameter() << std::endl;
-    }
-
-    if (star::KeyStates::state(KEY::J)) {
-        spot->setInnerDiameter(spot->getInnerDiameter() + (spotSpeed * elapsedTime));
-        std::cout << spot->getInnerDiameter() << std::endl;
-    }
-    else if (star::KeyStates::state(KEY::H)) {
-        spot->setInnerDiameter(spot->getInnerDiameter() - (spotSpeed * elapsedTime));
-        std::cout << spot->getInnerDiameter() << std::endl;
-    }
-    this->time.updateLastFrameTime();*/
 }
 
 void Application::onKeyPress(int key, int scancode, int mods)

@@ -133,9 +133,6 @@ std::optional<glm::vec3> Grid::getWorldCoordsWhereRayIntersectsMe(glm::vec3 tail
 		auto dot = glm::dot(glm::vec4(dis, 0.0), this->upVector);
 		float t = dot / denm;
 		if (t >= 0) {
-			//auto intersectPoint = glm::vec4((tail + t), 0.0) * vectorDirection;
-			//auto scaledInt = intersectPoint * glm::vec4(this->getScale(), 0.0); 
-			//return std::optional<glm::vec4>(intersectPoint); 
 			auto point = tail + t * vectorDirection;
 			return std::optional<glm::vec3>(point);
 		}
@@ -153,14 +150,6 @@ std::optional<glm::vec2> Grid::getXYCoordsWhereRayIntersectsMe(glm::vec3 tail, g
 		return std::optional<glm::vec2>();
 	else
 		modelLoc = glm::inverse(this->getDisplayMatrix()) * glm::vec4(worldLoc.value(), 1.0); 
-
-	//convert world loc to x-y texture coordinate
-	//glm::vec3 center = this->getCenter(); 
-
-	//glm::vec2 fCenter = glm::vec2{ center.x, center.z };
-	//glm::vec2 fHit = glm::vec2{ modelLoc.x, modelLoc.z }; 
-
-	//glm::vec2 distance = fCenter - fHit; 
 
 	//calculate step sizes 
 	float stepX = 1.0f / this->vertX; 
