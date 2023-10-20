@@ -51,19 +51,13 @@ protected:
     bool canApplyColorToLocation(int upTexLocX, int upTexLocY, star::Color color); 
 
 private:
-    vk::Semaphore* textureUpdateDone = nullptr; 
-    const int sunSpeed = 50;
-    const float spotSpeed = 2;
-    double scaleAmt = 0.1;
-    star::StarObject* rock = nullptr;
-    star::Light* sun = nullptr;
-    star::Light* spot = nullptr;
-    Grid* gridObj = nullptr; 
-    int frameCounter = 0; 
-    int upTexLocX = 0, upTexLocY = 0; 
+    star::Time point; 
+    double timeCounter = 0; 
+    int strength = 50;
     int width = 5;
     double mouseXPos = 0, mouseYPos = 0; 
     bool wasClick = false; 
+    Grid* gridObj = nullptr; 
 
     static int screen_x, screen_y; 
     static int disabledLightCounter;

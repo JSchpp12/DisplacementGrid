@@ -44,38 +44,34 @@ void Application::Load()
 void Application::onWorldUpdate()
 {
     bool update = false; 
+    timeCounter += point.timeElapsedLastFrameSeconds(); 
 
-    if (star::KeyStates::state(star::KEY::UP)) {
-         auto newLocY = upTexLocY + 1; 
-        if (newLocY > 0 && newLocY < gridObj->getSizeY())
-            upTexLocY = newLocY; 
-        update = true;
+    if (timeCounter > 0.1) {
+        timeCounter = 0; 
+
+        if (star::KeyStates::state(star::KEY::UP)) {
+            update = true;
+            width++;
+        }
+        if (star::KeyStates::state(star::KEY::DOWN)) {
+            update = true;
+            width--;
+        }
+        if (star::KeyStates::state(star::KEY::RIGHT)) {
+            update = true;
+            strength++;
+        }
+        if (star::KeyStates::state(star::KEY::LEFT)) {
+            update = true;
+            strength--; 
+        }
     }
-
-    if (star::KeyStates::state(star::KEY::DOWN)) {
-        auto newLocY = upTexLocY - 1;
-        if (newLocY > 0 && newLocY < gridObj->getSizeY())
-            upTexLocY = newLocY;
-        update = true;
+    
+    if (update) {
+        std::cout << "Strength: " << strength << std::endl; 
+        std::cout << "Width: " << width << std::endl;
     }
-
-    if (star::KeyStates::state(star::KEY::RIGHT)) {
-        auto newLocX = upTexLocX + 1; 
-        if (newLocX > 0 && newLocX < gridObj->getSizeX())
-            upTexLocX = newLocX;
-        update = true;
-    }
-
-    if (star::KeyStates::state(star::KEY::LEFT)) {
-        auto newLocX = upTexLocX - 1;
-        if (newLocX > 0 && newLocX < gridObj->getSizeX())
-            upTexLocX = newLocX;
-        update = true;
-    }
-
-    if (update)
-        std::cout << "Location: " << upTexLocX << ", " << upTexLocY << std::endl;
-
+        
     if (star::KeyStates::state(star::KEY::SPACE)) {
         //cast ray toward plane
         auto tail = this->camera.getPosition();
@@ -84,7 +80,7 @@ void Application::onWorldUpdate()
 
         std::optional<glm::vec2> hitPoint = gridObj->getXYCoordsWhereRayIntersectsMe(tail, head);
         if (hitPoint.has_value()) {
-            applyStrokeAroundLocation(hitPoint.value(), 50, 10);
+            applyStrokeAroundLocation(hitPoint.value(), width, strength);
         }
     }
 
@@ -102,26 +98,12 @@ void Application::onWorldUpdate()
         }
         gridObj->updateTexture(locsX, locsY, colors);
     }
+
+    point.updateLastFrameTime(); 
 }
 
 void Application::onKeyPress(int key, int scancode, int mods)
 {
-    //if (key == GLFW_KEY_M) {
-    //    auto& light = this->sceneBuilder.light(lightList.at(disabledLightCounter));
-    //    light.setEnabled();
-    //    if (!upCounter && disabledLightCounter == 0) {
-    //        upCounter = true;
-    //    }
-    //    else if (upCounter && disabledLightCounter == lightList.size() - 1) {
-    //        upCounter = false;
-    //    }
-    //    disabledLightCounter = upCounter ? disabledLightCounter + 1 : disabledLightCounter - 1;
-    //}
-   
-
-    //if (key == GLFW_KEY_Z) {
-    //    sun->setEnabled();
-    //}
 }
 
 std::unique_ptr<star::StarRenderer> Application::getRenderer(star::StarDevice& device, star::StarWindow& window, star::RenderOptions& options)
@@ -132,8 +114,6 @@ std::unique_ptr<star::StarRenderer> Application::getRenderer(star::StarDevice& d
         prepObjects.push_back(*obj.second);
     }
     auto nRender = std::unique_ptr<UpdateTextureRenderer>(new UpdateTextureRenderer(window, lightList, prepObjects, camera, options, device));
-    textureUpdateDone = &nRender->getTextureUpdateSemaphore();
-
     return std::move(nRender); 
 }
 
@@ -142,31 +122,28 @@ void Application::applyStrokeAroundLocation(glm::vec2 location, int width, int c
     std::vector<int> locsX, locsY;
     std::vector<star::Color> colors;
 
+    float strengthStep = centerStrength / (width/2.0f); 
+    int upperX = location.x - (width / 2.0f); 
+    int upperY = location.y - (width / 2.0f); 
+
     for (int i = 0; i < width; i++) {
-        int locationX = 0;
-        if (i < width/2) {
-            locationX = location.x - i;
-        }
-        else {
-            locationX = location.x + (i - (width/2));
-        }
+        int locationX = upperX + i; 
 
         for (int j = 0; j < width; j++) {
-            int locationY = 0; 
-            if (j > width / 2)
-                locationY = location.y - j;
-            else
-                locationY = location.y + (j - (width/2)); 
+            int locationY = upperY + j; 
 
             auto newColor = gridObj->getTexColorAt(locationX, locationY);
             if (newColor.g() < 255) {
-                double strength = ((glm::abs(locationX + location.x))/location.x) * 0.5; 
-                strength = strength + (((glm::abs(locationY + location.y))/location.y) * 0.5); 
+                float strength = (float)centerStrength - (glm::distance(location, glm::vec2(locationX, locationY)) * strengthStep);
+                strength = strength * (timeCounter);
+
+                if (strength < 0)
+                    strength = 0; 
 
                 newColor = star::Color{
                 newColor.r(),
                 newColor.g(),
-                (int)glm::floor(newColor.b() + (centerStrength * strength)),
+                (int)glm::floor(newColor.b() + strength),
                 255 };
             }
 
@@ -204,7 +181,6 @@ void Application::onMouseMovement(double xpos, double ypos)
 void Application::onMouseButtonAction(int button, int action, int mods)
 {
     if (action == GLFW_PRESS) {
-        std::cout << "Click"; 
         this->wasClick = true; 
     }
 }
